@@ -1,0 +1,658 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="fileExtensions" value="java, properties, xml, yaml"/>
+    <property name="severity" value="error"/>
+    <property name="haltOnException" value="false"/>
+    <property name="tabWidth" value="4"/>
+
+    <!-- 过滤 -->
+    <module name="SeverityMatchFilter">
+        <!-- 报告除了ignore之外所有的审查 -->
+        <property name="severity" value="ignore"/>
+        <property name="acceptOnMatch" value="false"/>
+    </module>
+
+    <!-- java:S1228 检查每个包是否有package-info.java文件. -->
+    <module name="JavadocPackage">
+        <property name="severity" value="warning"/>
+    </module>
+
+    <!-- 检查文件是否以空行结尾 -->
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf_cr_crlf"/>
+    </module>
+
+    <module name="LineLength">
+        <property name="max" value="150"/>
+        <property name="fileExtensions" value="java"/>
+    </module>
+
+
+    <!-- 文件长度检查,这个不区分注释和代码,JavaNCSS检查可执行代码行数。 -->
+    <module name="FileLength">
+        <property name="max" value="2500"/>
+        <property name="severity" value="warning"/>
+    </module>
+
+    <!-- 检查国际化配置文件中的key是否一致 -->
+    <module name="Translation">
+        <!-- 检查必须有这些国际化配置 -->
+        <!-- <property name="requiredTranslations" value="zh, ja, de, fr"/> -->
+    </module>
+
+    <!-- 检查propertie文件中是否有重复key -->
+    <module name="UniqueProperties"/>
+
+    <!-- tab字符检查 -->
+    <module name="FileTabCharacter"/>
+
+    <!-- 添加自定义规则,检查回车换行 -->
+<!--    <module name="RegexpMultiline">-->
+<!--        <property name="severity" value="warning"/>-->
+<!--        <property name="format" value="(?s:(\r\n|\r).*)"/>-->
+<!--        <property name="message" value="请使用Unix换行符。"/>-->
+<!--    </module>-->
+
+    <!--<module name="RegexpSingleline"> <property name="format" value="\s+$"/> <property name="message" value="行尾有空白字符。"/> -->
+    <!-- 只检查非java的。java的检查在RegexpSinglelineJava -->
+    <!-- <property name="fileExtensions" value="properties, xml"/> <property name="severity" value="warning"/> </module> -->
+
+    <!-- 配合SuppressWarningsHolder开启 -->
+    <module name="SuppressWarningsFilter"/>
+
+    <module name="TreeWalker">
+        <!-- 计算一行长度时tab算几个字符.不允许用tab时不用设. -->
+        <property name="tabWidth" value="4"/>
+        <property name="fileExtensions" value="java"/>
+
+        <!-- 添加自定义规则 -->
+        <!--        <module name="RegexpSinglelineJava">-->
+        <!--            <property name="format" value="(?i)JsonObject"/>-->
+        <!--            <property name="message" value="禁止使用JsonObject。"/>-->
+        <!--            <property name="ignoreComments" value="true"/>-->
+        <!--        </module>-->
+        <!--        <module name="RegexpSinglelineJava">-->
+        <!--            <property name="format" value="(?i)JsonArray"/>-->
+        <!--            <property name="message" value="禁止使用JsonArray。"/>-->
+        <!--            <property name="ignoreComments" value="true"/>-->
+        <!--        </module>-->
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="\.printStackTrace\(\)"/>
+            <property name="ignoreComments" value="true"/>
+            <property name="message" value="禁止打印异常，只能使用log输出异常"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="\.copyProperties\(\)"/>
+            <property name="message" value="禁止使用copyProperties,而是使用 Mapstruct "/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <module name="Regexp">
+            <property name="illegalPattern" value="true"/>
+            <property name="format" value="System\.(out)|(err)\.print(ln)"/>
+            <property name="message" value="禁止使用System.out.println。"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+        <module name="Regexp">
+            <property name="illegalPattern" value="true"/>
+            <property name="format" value="System\.exit"/>
+            <property name="message" value="禁止使用System.exit。"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <!-- 注解检查 -->
+        <module name="AnnotationLocation">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="AnnotationOnSameLine">
+            <!-- 要求一些注解和被注解元素在一行。这个并不是很好的实践。 -->
+            <property name="severity" value="ignore"/>
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/5 -->
+        <module name="AnnotationUseStyle">
+            <property name="severity" value="warning"/>
+            <property name="elementStyle" value="compact"/>
+            <!-- <property name="trailingArrayComma" value="never" /> never 是默认值 <property name="closingParens" value="never" />
+              never 是默认值 -->
+        </module>
+        <module name="MissingDeprecated">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="MissingOverride">
+            <property name="javaFiveCompatibility" value="false"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="PackageAnnotation">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="SuppressWarnings">
+            <!-- 设置不允许SuppressWarnings抑制的规则列表 -->
+            <property name="format" value="ALL|all"/>
+            <property name="severity" value="warning"/>
+        </module>
+
+        <!-- 支持通过@SuppressWarnings("checkstyle:xxxx")跳过指定的检查。此功能必须使能SuppressWarningsFilter。 注意：xxxx表示规则名，必须全部小写！ 如果注解不起作用，可能需要调整其位置。例如：注解到方法上，而不是语句上。 -->
+        <module name="SuppressWarningsHolder"/>
+
+        <module name="SuppressionCommentFilter">
+            <!-- 通过一组注释（CHECKSTYLE:OFF、CHECKSTYLE:ON）关闭、打开checkstyle检查 -->
+            <property name="checkFormat" value="RegexpSinglelineJavaCheck"/>
+        </module>
+
+        <!-- 块检查 -->
+        <!-- See http://checkstyle.sf.net/config_blocks.html -->
+        <module name="AvoidNestedBlocks">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="EmptyBlock">
+            <property name="severity" value="error"/>
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/1 -->
+        <module name="EmptyCatchBlock">
+            <property name="severity" value="error"/>
+            <!-- 捕获异常后不处理，变量名定义为以下值时，可以跳过检查 -->
+            <property name="exceptionVariableName" value="expected|ignore|shouldBeIgnored|isExpected"/>
+            <!-- 异常处理都是注释，如果注释实际首行内容是 This is expected 可以跳过次检查 -->
+            <property name="commentFormat" value="This is expected"/>
+            <message key="catch.block.empty"
+                     value="捕获的异常未处理，变量值定义为 expected|ignore|shouldBeIgnored|isExpected 可以跳过此检查\n异常处理都是注释，如果注释实际首行内容是 This is expected 可以跳过次检查 "/>
+        </module>
+
+        <!--option: 定义左大括号'{'显示位置，eol在同一行显示，nl在下一行显示
+          maxLineLength: 大括号'{'所在行行最多容纳的字符数
+          tokens: 该属性适用的类型，例：CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF -->
+        <module name="LeftCurly">
+            <property name="option" value="eol"/>
+            <property name="severity" value="info"/>
+        </module>
+        <!-- NeedBraces 检查是否应该使用括号的地方没有加括号
+          tokens: 定义检查的类型 -->
+        <module name="NeedBraces">
+            <property name="severity" value="info"/>
+        </module>
+
+        <!-- Checks the placement of right curly braces ('}') for  else, try, and catch tokens. The policy to verify is specified using property  option.
+          option: 右大括号是否单独一行显示
+          tokens: 定义检查的类型  -->
+        <module name="RightCurly">
+            <property name="severity" value="info"/>
+        </module>
+
+        <!-- 类设计 -->
+        <module name="DesignForExtension">
+            <property name="ignoredAnnotations" value="Override, Test, Before, After, BeforeClass, AfterClass"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="FinalClass">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="HideUtilityClassConstructor">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="InnerTypeLast">
+            <property name="severity" value="warning"/>
+        </module>
+        <!--        <module name="InterfaceIsType">-->
+        <!--            <property name="severity" value="error"/>-->
+        <!--        </module>-->
+        <module name="MutableException">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="OneTopLevelClass">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ThrowsCount">
+            <property name="max" value="4"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="packageAllowed" value="true"/>
+            <property name="severity" value="error"/>
+        </module>
+
+        <!-- 编码问题 -->
+        <module name="ArrayTrailingComma">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="AvoidInlineConditionals">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="CovariantEquals"/>
+        <!-- java:S1124 For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/6 -->
+        <module name="DeclarationOrder">
+            <property name="severity" value="warning"/>
+            <message key="declaration.order.constructor"
+                     value="构造器定义顺序错误:1.类变量,实例变量: public->protected->default->private;2.类方法：构造方法->其他方法"/>
+            <message key="declaration.order.instance"
+                     value="实例属性定义顺序错误:1.类变量,实例变量: public->protected->default->private;2.类方法：构造方法->其他方法"/>
+            <message key="declaration.order.static"
+                     value="静态属性定义顺序错误:1.类变量,实例变量: public->protected->default->private;2.类方法：构造方法->其他方法"/>
+        </module>
+        <module name="DefaultComesLast"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsAvoidNull"/>
+        <!-- 检查在重写了equals方法后是否重写了hashCode方法 -->
+        <module name="EqualsHashCode"/>
+        <module name="ExplicitInitialization"/>
+
+
+        <!-- 下面两个PMD和SONAR 已检查 -->
+        <!--检查switch中case后是否加入了跳出语句，例如：return、break、throw、continue -->
+        <module name="FallThrough">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="IllegalCatch">
+            <property name="severity" value="ignore"/>
+        </module>
+
+        <module name="IllegalInstantiation"/>
+        <module name="IllegalThrows">
+            <property name="ignoredMethodNames" value="around"/>
+        </module>
+        <module name="IllegalToken">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="IllegalTokenText">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="IllegalType">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="InnerAssignment">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MagicNumber">
+            <property name="severity" value="warning"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 100"/>
+            <property name="ignoreFieldDeclaration" value="true"/>
+            <property name="ignoreAnnotation" value="true"/>
+        </module>
+        <module name="MissingCtor">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="MissingSwitchDefault">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ModifiedControlVariable">
+            <property name="skipEnhancedForLoopVariable" value="true"/>
+        </module>
+        <module name="MultipleStringLiterals">
+            <property name="ignoreStringsRegexp" value="Method Not implemented"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MultipleVariableDeclarations">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="NestedForDepth">
+            <property name="max" value="3"/>
+        </module>
+        <!-- if-else嵌套语句个数 最多4层 -->
+        <module name="NestedIfDepth">
+            <property name="max" value="3"/>
+        </module>
+        <!-- try-catch 嵌套语句个数 最多2层 -->
+        <module name="NestedTryDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NoClone"/>
+        <module name="NoFinalizer"/>
+        <module name="OneStatementPerLine">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="OverloadMethodsDeclarationOrder"/>
+        <module name="PackageDeclaration">
+            <property name="severity" value="warning"/>
+        </module>
+        <!-- 不允许对参数进行赋值 -->
+        <module name="ParameterAssignment"/>
+        <module name="RequireThis"/>
+        <!-- java:S1142 -->
+        <module name="ReturnCount">
+            <property name="max" value="3"/>
+            <property name="maxForVoid" value="1"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <!--- 字符串比较必须使用 equals() -->
+        <module name="StringLiteralEquality"/>
+        <module name="SuperClone"/>
+        <module name="SuperFinalize"/>
+        <module name="UnnecessaryParentheses">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="VariableDeclarationUsageDistance">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <!-- Checks for Headers -->
+        <!-- See http://checkstyle.sf.net/config_header.html <module name="Header"> <property name="headerFile" value="${checkstyle.header.file}"/>
+          <property name="fileExtensions" value="java"/> <property name="severity" value="ignore"/> </module> <module name="RegexpHeader">
+          <property name="headerFile" value="${checkstyle.header.file}"/> <property name="fileExtensions" value="java"/> <property
+          name="severity" value="ignore"/> </module> -->
+
+        <!-- 导入规范 -->
+        <module name="AvoidStarImport">
+            <!-- 因为下面的静态导入有特例，所以这里对静态的检查设为允许 -->
+            <property name="allowStaticMemberImports" value="true"/>
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/3 -->
+        <module name="AvoidStaticImport">
+            <property name="excludes" value="org.junit.Assert.*,java.lang.Math.*"/>
+            <property name="severity" value="ignore"/> <!-- warn -->
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/4 -->
+        <module name="CustomImportOrder">
+            <property name="severity" value="warning"/>
+            <property name="customImportOrderRules"
+                      value="STATIC###STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE"/>
+            <property name="specialImportsRegExp" value="^org\."/>
+            <property name="thirdPartyPackageRegExp" value="^com\."/>
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <property name="separateLineBetweenGroups" value="true"/>
+        </module>
+        <!-- 检查是否从非法的包中导入了类 illegalPkgs: 定义非法的包名称-->
+        <module name="IllegalImport"/>
+        <!--控制允许导入每个包中的哪些类-->
+        <!--        <module name="ImportControl">-->
+        <!--            <property name="severity" value="ignore"/>-->
+        <!--        </module>-->
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/4 -->
+        <module name="ImportOrder">
+            <!-- 使用CustomImportOrder -->
+            <property name="severity" value="ignore"/>
+            <property name="groups" value="/^java\./,javax,org,com"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="top"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+        </module>
+        <!-- 检查是否导入了不必显示导入的类-->
+        <module name="RedundantImport"/>
+        <!-- 检查是否导入的包没有使用-->
+        <module name="UnusedImports"/>
+
+        <!--
+       @语句的顺序
+       -->
+        <module name="AtclauseOrder">
+            <property name="tagOrder" value="@param, @author, @version,
+                           @return, @throws, @exception, @see, @since, @serial,
+                           @serialField, @serialData, @deprecated"/>
+            <property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF,
+                           METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
+        </module>
+
+        <!-- 检查方法的javadoc的注释
+                scope: 可以检查的方法的范围，例如：public只能检查public修饰的方法，private可以检查所有的方法
+                allowMissingParamTags: 是否忽略对参数注释的检查
+                allowMissingThrowsTags: 是否忽略对throws注释的检查
+                allowMissingReturnTag: 是否忽略对return注释的检查 -->
+        <module name="JavadocMethod">
+            <property name="allowMissingParamTags" value="false"/>
+            <property name="allowMissingReturnTag" value="false"/>
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="severity" value="info"/>
+        </module>
+        <module name="JavadocParagraph">
+            <property name="severity" value="info"/>
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/14 -->
+        <!-- JavaDoc首行末尾，改规则原规则 和 SummaryJavadoc 规则， 默认时JavaDoc行位只能是英文的 "."；因此 SummaryJavadoc 设置为失效，使用 JavadocStyle设置行位符号。 使用的属性
+          endOfSentenceFormat，见下方说明. -->
+        <!-- 规则说明地址：https://checkstyle.sourceforge.io/config_javadoc.html#JavadocStyle -->
+        <module name="JavadocStyle">
+            <property name="checkFirstSentence" value="false"/>
+            <property name="severity" value="info"/>
+            <!-- 默认规则为：([.?!][ \t\n\r\f<])|([.?!]$)，根据这个自行添加了 ; 。？！； 同时 < 这个符号写在XML的attribute中需要转义 &lt; -->
+            <property name="endOfSentenceFormat" value="([.?!;。？！；][ \t\n\r\f&lt;])|([.?!;。？！；]$)"/>
+        </module>
+
+        <module name="JavadocTagContinuationIndentation">
+            <!-- 与泛型互相影响，所以不检查 -->
+            <property name="severity" value="ignore"/>
+        </module>
+
+        <!-- 检查类和接口的javadoc 默认不检查author 和version tags
+          authorFormat: 检查author标签的格式
+                versionFormat: 检查version标签的格式
+                scope: 可以检查的类的范围，例如：public只能检查public修饰的类，private可以检查所有的类
+                excludeScope: 不能检查的类的范围，例如：public，public的类将不被检查，但访问权限小于public的类仍然会检查，其他的权限以此类推
+                tokens: 该属性适用的类型，例如：CLASS_DEF,INTERFACE_DEF -->
+        <!--        <module name="JavadocType">-->
+        <!--            <property name="authorFormat" value="\S"/>-->
+        <!--            <property name="scope" value="private"/>-->
+        <!--            <property name="tokens" value="CLASS_DEF,INTERFACE_DEF"/>-->
+        <!--            <property name="severity" value="info"/>-->
+        <!--            <property name="allowedAnnotations" value="@SpringBootApplication, @ConfigurationProperties"/>-->
+        <!--        </module>-->
+
+        <!-- 检查类变量的注释
+                scope: 检查变量的范围，例如：public只能检查public修饰的变量，private可以检查所有的变量 -->
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/7 -->
+        <module name="JavadocVariable">
+            <property name="severity" value="info"/>
+            <property name="scope" value="package"/>
+            <property name="ignoreNamePattern" value="(?i)(log|logger|LOG|LOGGER)"/>
+        </module>
+
+        <module name="NonEmptyAtclauseDescription"/>
+        <module name="SingleLineJavadoc">
+            <property name="severity" value="warning"/>
+        </module>
+        <!-- For https://gitlab.mochasoft.com.cn/commons/codechecking-cfg/issues/14 -->
+        <module name="SummaryJavadoc">
+            <!-- 设置了改规则失效. -->
+            <property name="severity" value="ignore"/>
+            <!-- 因为JavadocStyle做了首句标点检查，这里就不做了检查了 -->
+            <property name="period" value=""/>
+        </module>
+        <!-- java:S1176 -->
+        <module name="WriteTag"/>
+
+        <!-- 度量检查 -->
+        <module name="BooleanExpressionComplexity">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="ClassDataAbstractionCoupling">
+            <property name="max" value="15" />
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ClassFanOutComplexity">
+            <property name="max" value="30"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="CyclomaticComplexity">
+            <property name="switchBlockAsSingleDecisionPoint" value="true"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="JavaNCSS">
+            <property name="methodMaximum" value="50"/>
+            <property name="classMaximum" value="800"/>
+            <property name="fileMaximum" value="1000"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="NPathComplexity">
+            <property name="max" value="200"/>
+            <property name="severity" value="info"/>
+        </module>
+
+        <!-- 其他检查 -->
+        <module name="ArrayTypeStyle"/>
+        <module name="AvoidEscapedUnicodeCharacters">
+            <property name="allowEscapesForControlCharacters" value="true"/>
+            <property name="allowNonPrintableEscapes" value="true"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="CommentsIndentation">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="DescendantToken">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="FinalParameters">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+        </module>
+        <module name="OuterTypeFilename">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <!--        检查是否存在TODO（待处理） TODO是javaIDE自动生成的。一般代码写完后要去掉。-->
+        <module name="TodoComment">
+            <property name="severity" value="info"/>
+        </module>
+
+        <module name="TrailingComment">
+            <property name="severity" value="ignore"/>
+        </module>
+        <!--  检查是否在long类型是否定义了大写的L.字母小写l和数字1（一）很相似 -->
+        <module name="UpperEll">
+            <property name="severity" value="info"/>
+        </module>
+
+        <!-- 修饰符检查 -->
+        <module name="ClassMemberImpliedModifier">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="InterfaceMemberImpliedModifier">
+            <property name="severity" value="ignore"/>
+        </module>
+        <!-- ModifierOrder 检查修饰符的顺序，默认是 public,protected,private,abstract,static,final,transient,volatile,synchronized,native -->
+        <module name="ModifierOrder"/>
+        <!-- 因为JDK8以后，interface陆续引入了静态方法、缺省方法、私有方法等，所以不再检查接口的多余修饰，而推荐明确写出修饰。 -->
+        <!-- <module name="RedundantModifier"/> -->
+
+        <!-- 命名规范 -->
+        <module name="AbbreviationAsWordInName">
+            <!-- 名字简写检查。不能连续出现大写字母格式缺省为3。 -->
+            <property name="severity" value="info"/>
+        </module>
+        <module name="AbstractClassName">
+            <property name="format" value="^(Abstract|Base|Abs).+$"/>
+        </module>
+        <module name="CatchParameterName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ClassTypeParameterName"/>
+        <!-- constants (static,  final fields) -->
+        <module name="ConstantName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="InterfaceTypeParameterName"/>
+        <module name="LambdaParameterName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName">
+            <property name="severity" value="warning"/>
+        </module>
+        <!-- non-static fields -->
+        <module name="MemberName">
+            <!--            <property name="format" value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,29}$)"/>-->
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MethodName">
+            <!--            <property name="format" value="(^[a-z][a-zA-Z0-9]{0,29}$)"/>-->
+        </module>
+        <module name="MethodTypeParameterName"/>
+        <!-- 包名的检查（只允许小写字母），默认^[a-z]+(\.[a-zA-Z_][a-zA-Z_0-9_]*)*$ -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+            <message key="name.invalidPattern" value="包名 ''{0}'' 要符合 ''{1}''格式."/>
+        </module>
+        <module name="ParameterName">
+            <property name="format" value="^([a-z][a-zA-Z0-9]+)$"/>
+            <property name="ignoreOverridden" value="true"/>
+        </module>
+        <!-- 仅仅是static型的变量（不包括static final型）的检查 -->
+        <module name="StaticVariableName">
+            <property name="format" value="^[a-zA-Z][a-zA-Z0-9_]*$"/>
+            <property name="applyToPublic" value="false"/>
+        </module>
+        <!-- Class或Interface名检查，默认^[A-Z][a-zA-Z0-9]*$-->
+        <module name="TypeName">
+            <property name="severity" value="warning"/>
+            <message key="name.invalidPattern" value="名称 ''{0}'' 要符合 ''{1}''格式."/>
+        </module>
+
+        <!-- SIZE相关检查 -->
+        <module name="AnonInnerLength"/>
+        <module name="ExecutableStatementCount">
+            <property name="severity" value="info"/>
+        </module>
+
+        <module name="MethodCount">
+            <property name="maxTotal" value="150"/>
+        </module>
+        <module name="MethodLength">
+            <property name="max" value="300"/>
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="OuterTypeNumber">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="severity" value="ignore"/>
+        </module>
+
+        <!-- 空白检查 -->
+        <module name="EmptyForInitializerPad">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="EmptyForIteratorPad">
+            <property name="severity" value="warning"/>
+        </module>
+
+        <module name="GenericWhitespace"/>
+
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="false"/>
+            <!-- 字符间只允许用一个空白来分隔。如果喜欢用空格把上下行的名字对齐，显得公整，这个检测就不适合了 -->
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="EmptyLineSeparator">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="MethodParamPad">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="NoLineWrap">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="NoWhitespaceAfter">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="NoWhitespaceBefore">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="OperatorWrap">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="ParenPad">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="SeparatorWrap">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="TypecastParenPad">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="WhitespaceAfter">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="WhitespaceAround">
+            <property name="severity" value="info"/>
+        </module>
+    </module>
+</module>

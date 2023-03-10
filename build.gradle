@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id "checkstyle"
+}
+
+group 'ponder.red'
+version '1.0-SNAPSHOT'
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = "UTF-8"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    implementation("com.hazelcast:hazelcast:5.2.0")
+    implementation("com.alibaba.nacos:nacos-client:2.1.2")
+    implementation("org.slf4j:slf4j-api:2.0.6")
+    implementation("org.springframework:spring-core:5.3.25")
+    implementation("org.springframework:spring-context:5.3.25")
+}
+
+test {
+    useJUnitPlatform()
+}
